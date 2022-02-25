@@ -2,14 +2,37 @@ import 'dart:ui';
 import 'package:analog_clock/analog_clock.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:quds_ui_kit/viewers/quds_digital_clock_viewer.dart';
 import 'package:quds_ui_kit/viewers/quds_digital_time_viewer.dart';
 import 'package:todoapp/constants.dart';
+import 'package:todoapp/data/local_storage.dart';
+import 'package:todoapp/helper/translation_helper.dart';
+import 'package:todoapp/main.dart';
+import 'package:todoapp/models/task_model.dart';
+import 'package:todoapp/taskitem.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late LocalStorage _localStorage;
+  late List<Task> _AllTasks;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _localStorage = locator<LocalStorage>();
+    _AllTasks = <Task>[];
+    _GetAllTasksFromDB();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,15 +156,22 @@ class HomePage extends StatelessWidget {
                       child: ListView.builder(
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemBuilder: (context, index) => Dismissible(
-                          onDismissed: (direction) {},
-                          key: Key(index.toString()),
-                          child: ExpansionTile(
-                              childrenPadding: EdgeInsets.all(20),
-                              title: const Text("Task"),
-                              leading: Image.asset("assets/images/work1.png")),
-                        ),
-                        itemCount: 50,
+                        itemBuilder: (context, index) {
+                          var _CurrentListElement = _AllTasks[index];
+                          return Dismissible(
+                              onDismissed: (direction) {
+                                setState(() {
+                                  _AllTasks.removeAt(index);
+                                  _localStorage.DeleteTask(
+                                      task: _CurrentListElement);
+                                });
+                              },
+                              key: Key(_CurrentListElement.Id),
+                              child: TaskItem(
+                                task: _CurrentListElement,
+                              ));
+                        },
+                        itemCount: _AllTasks.length,
                       ),
                     ),
                   )
@@ -164,6 +194,26 @@ class HomePage extends StatelessWidget {
             width: MediaQuery.of(context).size.width,
             child: ListTile(
               title: TextField(
+                maxLength: 30,
+                onSubmitted: (value) {
+                  Navigator.pop(context);
+                  if (value.length > 1) {
+                    DatePicker.showDateTimePicker(context,
+                        //locale: TranslationHelper.getDeviceLanguage(context),
+                        onConfirm: (time) async {
+                      ShowContentTextField(value, time);
+
+                      // Task NewTask = Task.create(
+                      //     Name: value,
+                      //     EndDate: time,
+                      //     taskContent: "test content");
+                      // //
+                      // // Should insert sorted
+                      // //
+                    }, minTime: DateTime.now());
+                  }
+                },
+                decoration: InputDecoration(hintText: "Add Task"),
                 autofocus: true,
               ),
             ),
@@ -183,5 +233,37 @@ class HomePage extends StatelessWidget {
     //         ),
     //       );
     //     });
+  }
+
+  void _GetAllTasksFromDB() async {
+    _AllTasks = await _localStorage.GetAllTasks();
+    setState(() {});
+  }
+
+  void ShowContentTextField(String name, DateTime time) {
+    showBarModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+            padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom),
+            width: MediaQuery.of(context).size.width,
+            child: ListTile(
+                title: TextField(
+              decoration: InputDecoration(hintText: "Please write the content"),
+              maxLength: 100,
+              autofocus: true,
+              onSubmitted: (value) async {
+                Navigator.pop(context);
+                Task NewTask =
+                    Task.create(Name: name, EndDate: time, taskContent: value);
+                _AllTasks.insert(0, NewTask);
+
+                await _localStorage.AddTask(Task: NewTask);
+                setState(() {});
+              },
+            )),
+          );
+        });
   }
 }

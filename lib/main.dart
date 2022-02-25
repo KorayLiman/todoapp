@@ -8,7 +8,7 @@ import 'package:get_it/get_it.dart';
 Future<void> SetupHive() async {
   await Hive.initFlutter();
   Hive.registerAdapter(TaskAdapter());
-  var TaskBox = Hive.openBox<Task>("TaskBox");
+  var TaskBox = await Hive.openBox<Task>("TaskBox");
 }
 
 final locator = GetIt.instance;
