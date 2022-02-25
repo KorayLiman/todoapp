@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:analog_clock/analog_clock.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -139,7 +138,7 @@ class HomePage extends StatelessWidget {
                           key: Key(index.toString()),
                           child: ExpansionTile(
                               childrenPadding: EdgeInsets.all(20),
-                              title: const Text("Test Task"),
+                              title: const Text("Task"),
                               leading: Image.asset("assets/images/work1.png")),
                         ),
                         itemCount: 50,
