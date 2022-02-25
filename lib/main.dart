@@ -4,6 +4,7 @@ import 'package:todoapp/data/local_storage.dart';
 import 'package:todoapp/models/task_model.dart';
 import 'package:todoapp/pages/HomePage.dart';
 import 'package:get_it/get_it.dart';
+import 'package:flutter/services.dart';
 
 Future<void> SetupHive() async {
   await Hive.initFlutter();
@@ -18,6 +19,8 @@ void setup() {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   await SetupHive();
   setup();
   runApp(const MyApp());

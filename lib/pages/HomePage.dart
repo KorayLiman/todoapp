@@ -14,6 +14,7 @@ import 'package:todoapp/main.dart';
 import 'package:todoapp/models/task_model.dart';
 import 'package:todoapp/taskitem.dart';
 
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -21,9 +22,11 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   late LocalStorage _localStorage;
   late List<Task> _AllTasks;
+  late TabController _MyTabController;
 
   @override
   void initState() {
@@ -32,6 +35,7 @@ class _HomePageState extends State<HomePage> {
     _localStorage = locator<LocalStorage>();
     _AllTasks = <Task>[];
     _GetAllTasksFromDB();
+    _MyTabController = TabController(length: 3, vsync: this);
   }
 
   @override
@@ -45,8 +49,7 @@ class _HomePageState extends State<HomePage> {
             flex: 6,
             child: Container(
               color: Color.fromRGBO(4, 12, 58, 1),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Stack(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -67,15 +70,17 @@ class _HomePageState extends State<HomePage> {
                       )
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 40.0),
+                  Positioned(
+                    top: MediaQuery.of(context).size.height / 5,
+                    left: 40,
                     child: Text(
                       "Manage your tasks easily",
                       style: Constants.MyStyle,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 40.0, top: 30),
+                  Positioned(
+                    bottom: -2,
+                    left: 40,
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width - 200,
                       child: const Text(
@@ -116,7 +121,7 @@ class _HomePageState extends State<HomePage> {
             flex: 3,
           ),
           Expanded(
-            flex: 9,
+            flex: 11,
             child: Container(
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
@@ -127,29 +132,40 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 30.0, left: 30),
-                        child: const Text(
-                          "Here are your Tasks",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20,
+                  TabBar(
+                      indicatorSize: TabBarIndicatorSize.label,
+                      controller: _MyTabController,
+                      tabs: [
+                        Tab(
+                          child: Text("Business",
+                              style: GoogleFonts.lobster(
+                                color: Colors.black,
+                              )),
+                          height: 80,
+                          icon: Image.asset(
+                            "assets/images/business.png",
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 20.0),
-                        child: CircleAvatar(
-                          child: IconButton(
-                              onPressed: () {}, icon: Icon(Icons.search)),
+                        Tab(
+                          child: Text("School",
+                              style: GoogleFonts.lobster(
+                                color: Colors.black,
+                              )),
+                          height: 80,
+                          icon: Image.asset("assets/images/school.png"),
                         ),
-                      )
-                    ],
-                  ),
+                        Tab(
+                          child: Text("Payments",
+                              style: GoogleFonts.lobster(
+                                color: Colors.black,
+                              )),
+                          height: 105,
+                          icon: Image.asset(
+                            "assets/images/bill.png",
+                            scale: 1.9,
+                          ),
+                        ),
+                      ]),
                   Expanded(
                     child: SingleChildScrollView(
                       physics: ScrollPhysics(),
