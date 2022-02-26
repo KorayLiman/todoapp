@@ -17,7 +17,7 @@ class TaskAdapter extends TypeAdapter<Task> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Task(
-      category: fields[4] as Category?,
+      category: fields[4] as Category,
       Id: fields[0] as String,
       EndDate: fields[2] as DateTime,
       Name: fields[1] as String,
@@ -48,6 +48,50 @@ class TaskAdapter extends TypeAdapter<Task> {
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is TaskAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
+}
+
+class CategoryAdapter extends TypeAdapter<Category> {
+  @override
+  final int typeId = 2;
+
+  @override
+  Category read(BinaryReader reader) {
+    switch (reader.readByte()) {
+      case 0:
+        return Category.Business;
+      case 1:
+        return Category.School;
+      case 2:
+        return Category.Payments;
+      default:
+        return Category.Business;
+    }
+  }
+
+  @override
+  void write(BinaryWriter writer, Category obj) {
+    switch (obj) {
+      case Category.Business:
+        writer.writeByte(0);
+        break;
+      case Category.School:
+        writer.writeByte(1);
+        break;
+      case Category.Payments:
+        writer.writeByte(2);
+        break;
+    }
+  }
+
+  @override
+  int get hashCode => typeId.hashCode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is CategoryAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

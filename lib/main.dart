@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 Future<void> SetupHive() async {
   await Hive.initFlutter();
   Hive.registerAdapter(TaskAdapter());
+  Hive.registerAdapter(CategoryAdapter());
   var TaskBox = await Hive.openBox<Task>("TaskBox");
 }
 

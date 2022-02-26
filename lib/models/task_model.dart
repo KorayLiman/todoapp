@@ -3,7 +3,15 @@ import 'package:uuid/uuid.dart';
 
 part 'task_model.g.dart';
 
-enum Category { Business, School, Payments }
+
+@HiveType(typeId: 2)
+enum Category { 
+@HiveField(0)
+Business, 
+@HiveField(1)
+School, 
+@HiveField(2)
+Payments }
 
 @HiveType(typeId: 1)
 class Task extends HiveObject {
@@ -16,7 +24,7 @@ class Task extends HiveObject {
   @HiveField(3)
   final String? TaskContent;
   @HiveField(4)
-  final Category? category;
+  final Category category;
 
   Task(
       {required this.category,

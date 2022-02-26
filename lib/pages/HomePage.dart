@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 import 'package:analog_clock/analog_clock.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -38,7 +39,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     // TODO: implement initState
     super.initState();
-    category = Category.Business;
+
     _localStorage = locator<LocalStorage>();
     _AllTasks = <Task>[];
     _SchoolTasks = <Task>[];
@@ -215,7 +216,22 @@ class _HomePageState extends State<HomePage>
                                       localStorage: _localStorage,
                                       index: index);
                                 })),
-                        Container()
+                        SingleChildScrollView(
+                            child: ListView.builder(
+                                itemCount: _PaymentTasks.length,
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  var _CurrentListElement = _PaymentTasks[index];
+                                  return TaskItem(
+                                      onDelete: () {
+                                        setState(() {});
+                                      },
+                                      task: _CurrentListElement,
+                                      AllTasks: _PaymentTasks,
+                                      localStorage: _localStorage,
+                                      index: index);
+                                })),
                       ],
                     ),
                   )
@@ -347,6 +363,7 @@ class _HomePageState extends State<HomePage>
           PopupMenuItem(
               onTap: () async {
                 category = Category.Business;
+                
                 Task NewTask = Task.create(
                     category: category,
                     Name: name,
@@ -365,16 +382,17 @@ class _HomePageState extends State<HomePage>
               )),
           PopupMenuItem(
               onTap: () async {
+                category = Category.School;
+                
                 Task NewTask = Task.create(
                     category: category,
                     Name: name,
                     EndDate: time,
                     taskContent: value);
-                _AllTasks.insert(0, NewTask);
+                _SchoolTasks.insert(0, NewTask);
 
                 await _localStorage.AddTask(Task: NewTask);
                 setState(() {});
-                category = Category.School;
               },
               child: Row(
                 children: [
@@ -386,16 +404,17 @@ class _HomePageState extends State<HomePage>
               )),
           PopupMenuItem(
               onTap: () async {
+                category = Category.Payments;
+               
                 Task NewTask = Task.create(
                     category: category,
                     Name: name,
                     EndDate: time,
                     taskContent: value);
-                _AllTasks.insert(0, NewTask);
+                _PaymentTasks.insert(0, NewTask);
 
                 await _localStorage.AddTask(Task: NewTask);
                 setState(() {});
-                category = Category.Payments;
               },
               child: Row(
                 children: [

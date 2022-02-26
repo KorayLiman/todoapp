@@ -4,6 +4,7 @@ import 'package:todoapp/models/task_model.dart';
 abstract class LocalStorage {
   Future<bool> AddTask({required Task Task});
   Future<List<Task>> GetAllTasks(Category category);
+  
   Future<Task?> GetTask({required String id});
   Future<bool> DeleteTask({required Task task});
   Future<Task> UpdateTask({required Task task});
@@ -39,7 +40,7 @@ class HiveLocalStorage extends LocalStorage {
 
   @override
   Future<List<Task>> GetAllTasks(Category category) async {
-    _TaskBox.clear();
+   
     List<Task> _AllTasks = <Task>[];
     List<Task> Tasks = <Task>[];
     _AllTasks = _TaskBox.values.toList();
@@ -49,10 +50,11 @@ class HiveLocalStorage extends LocalStorage {
       }
     });
 
+
     if (Tasks.isNotEmpty) {
       Tasks.sort((Task a, Task b) => a.EndDate.compareTo(b.EndDate));
     }
-    return _AllTasks;
+    return Tasks;
   }
 
   @override
