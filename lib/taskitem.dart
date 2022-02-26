@@ -7,8 +7,6 @@ import 'package:todoapp/data/local_storage.dart';
 import 'package:todoapp/main.dart';
 import 'package:todoapp/models/task_model.dart';
 
-
-
 class TaskItem extends StatefulWidget {
   TaskItem(
       {Key? key,
@@ -40,6 +38,7 @@ class _TaskItemState extends State<TaskItem> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      textColor: widget.task.EndDate.microsecondsSinceEpoch <= DateTime.now().microsecondsSinceEpoch ? Colors.red:Colors.black,
       trailing: Text(widget.task.EndDate.toString().substring(0, 16)),
       title: Text(widget.task.Name),
       onTap: () {

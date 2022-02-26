@@ -45,6 +45,7 @@ class HiveLocalStorage extends LocalStorage {
     List<Task> Tasks = <Task>[];
     _AllTasks = _TaskBox.values.toList();
     _AllTasks.forEach((element) {
+      
       if (element.category == category) {
         Tasks.add(element);
       }

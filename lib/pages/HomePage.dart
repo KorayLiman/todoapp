@@ -7,6 +7,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_awesome_alert_box/flutter_awesome_alert_box.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:quds_ui_kit/viewers/quds_digital_clock_viewer.dart';
@@ -17,6 +18,8 @@ import 'package:todoapp/helper/translation_helper.dart';
 import 'package:todoapp/main.dart';
 import 'package:todoapp/models/task_model.dart';
 import 'package:todoapp/taskitem.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -39,7 +42,8 @@ class _HomePageState extends State<HomePage>
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    tz.initializeTimeZones();
+   
     _localStorage = locator<LocalStorage>();
     _AllTasks = <Task>[];
     _SchoolTasks = <Task>[];
@@ -222,7 +226,8 @@ class _HomePageState extends State<HomePage>
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
                                 itemBuilder: (context, index) {
-                                  var _CurrentListElement = _PaymentTasks[index];
+                                  var _CurrentListElement =
+                                      _PaymentTasks[index];
                                   return TaskItem(
                                       onDelete: () {
                                         setState(() {});
@@ -363,7 +368,7 @@ class _HomePageState extends State<HomePage>
           PopupMenuItem(
               onTap: () async {
                 category = Category.Business;
-                
+
                 Task NewTask = Task.create(
                     category: category,
                     Name: name,
@@ -383,7 +388,7 @@ class _HomePageState extends State<HomePage>
           PopupMenuItem(
               onTap: () async {
                 category = Category.School;
-                
+
                 Task NewTask = Task.create(
                     category: category,
                     Name: name,
@@ -404,8 +409,21 @@ class _HomePageState extends State<HomePage>
               )),
           PopupMenuItem(
               onTap: () async {
-                category = Category.Payments;
+//                 const AndroidNotificationDetails androidPlatformChannelSpecifics =
+//     AndroidNotificationDetails('your channel id', 'your channel name',
+//         channelDescription: 'your channel description',
+//         importance: Importance.max,
+//         priority: Priority.high,
+//         ticker: 'ticker');
+// const NotificationDetails platformChannelSpecifics =
+//     NotificationDetails(android: androidPlatformChannelSpecifics);
+// await flutterLocalNotificationsPlugin.show(
+//     0, 'Title', 'Notification', platformChannelSpecifics,
+//     payload: 'item x');
+
                
+                category = Category.Payments;
+
                 Task NewTask = Task.create(
                     category: category,
                     Name: name,
@@ -414,6 +432,18 @@ class _HomePageState extends State<HomePage>
                 _PaymentTasks.insert(0, NewTask);
 
                 await _localStorage.AddTask(Task: NewTask);
+                 await flutterLocalNotificationsPlugin.zonedSchedule(
+                    0,
+                    'scheduled title',
+                    'scheduled body',
+                    tz.TZDateTime.now(tz.local).add(Duration(milliseconds: (NewTask.EndDate.millisecondsSinceEpoch- DateTime.now().millisecondsSinceEpoch))),
+                    const NotificationDetails(
+                        android: AndroidNotificationDetails(
+                            'your channel id', 'your channel name',
+                            channelDescription: 'your channel description')),
+                    androidAllowWhileIdle: true,
+                    uiLocalNotificationDateInterpretation:
+                        UILocalNotificationDateInterpretation.absoluteTime);
                 setState(() {});
               },
               child: Row(

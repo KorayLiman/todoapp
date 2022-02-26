@@ -48,6 +48,7 @@ dependencies:
   flutter_awesome_alert_box: ^2.1.1
   auto_size_text: ^3.0.0
   focused_menu: ^1.0.5
+  rxdart: ^0.27.3
   
 
 dev_dependencies:
