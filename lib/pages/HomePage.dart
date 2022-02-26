@@ -28,15 +28,21 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   late LocalStorage _localStorage;
   late List<Task> _AllTasks;
+  late List<Task> _SchoolTasks;
+  late List<Task> _PaymentTasks;
   late TabController _MyTabController;
+  late Category category;
   var formKey = GlobalKey<FormState>();
   late Timer _timer;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    category = Category.Business;
     _localStorage = locator<LocalStorage>();
     _AllTasks = <Task>[];
+    _SchoolTasks = <Task>[];
+    _PaymentTasks = <Task>[];
     _GetAllTasksFromDB();
     _MyTabController = TabController(length: 3, vsync: this);
   }
@@ -189,23 +195,26 @@ class _HomePageState extends State<HomePage>
                                   setState(() {});
                                 },
                               );
-                              // return Dismissible(
-                              //     onDismissed: (direction) {
-                              //       setState(() {
-                              //         _AllTasks.removeAt(index);
-                              //         _localStorage.DeleteTask(
-                              //             task: _CurrentListElement);
-                              //       });
-                              //     },
-                              //     key: Key(_CurrentListElement.Id),
-                              //     child: TaskItem(
-                              //       task: _CurrentListElement,
-                              //     ));
                             },
                             itemCount: _AllTasks.length,
                           ),
                         ),
-                        Container(),
+                        SingleChildScrollView(
+                            child: ListView.builder(
+                                itemCount: _SchoolTasks.length,
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  var _CurrentListElement = _SchoolTasks[index];
+                                  return TaskItem(
+                                      onDelete: () {
+                                        setState(() {});
+                                      },
+                                      task: _CurrentListElement,
+                                      AllTasks: _SchoolTasks,
+                                      localStorage: _localStorage,
+                                      index: index);
+                                })),
                         Container()
                       ],
                     ),
@@ -271,7 +280,10 @@ class _HomePageState extends State<HomePage>
   }
 
   void _GetAllTasksFromDB() async {
-    _AllTasks = await _localStorage.GetAllTasks();
+    _AllTasks = await _localStorage.GetAllTasks(Category.Business);
+    _SchoolTasks = await _localStorage.GetAllTasks(Category.School);
+    _PaymentTasks = await _localStorage.GetAllTasks(Category.Payments);
+
     setState(() {});
   }
 
@@ -315,16 +327,85 @@ class _HomePageState extends State<HomePage>
                       });
                 } else {
                   Navigator.pop(context);
-                  Task NewTask = Task.create(
-                      Name: name, EndDate: time, taskContent: value);
-                  _AllTasks.insert(0, NewTask);
 
-                  await _localStorage.AddTask(Task: NewTask);
-                  setState(() {});
+                  _ShowCategorySelection(name, time, value);
                 }
               },
             )),
           );
         });
+  }
+
+  void _ShowCategorySelection(String name, DateTime time, String value) {
+    showMenu(
+        color: Colors.blue.shade500,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        context: context,
+        position: RelativeRect.fromLTRB(MediaQuery.of(context).size.width / 2,
+            MediaQuery.of(context).size.height / 2, 0, 0),
+        items: [
+          PopupMenuItem(
+              onTap: () async {
+                category = Category.Business;
+                Task NewTask = Task.create(
+                    category: category,
+                    Name: name,
+                    EndDate: time,
+                    taskContent: value);
+                _AllTasks.insert(0, NewTask);
+
+                await _localStorage.AddTask(Task: NewTask);
+                setState(() {});
+              },
+              child: Row(
+                children: [
+                  Image.asset("assets/images/business.png"),
+                  const Text("Work")
+                ],
+              )),
+          PopupMenuItem(
+              onTap: () async {
+                Task NewTask = Task.create(
+                    category: category,
+                    Name: name,
+                    EndDate: time,
+                    taskContent: value);
+                _AllTasks.insert(0, NewTask);
+
+                await _localStorage.AddTask(Task: NewTask);
+                setState(() {});
+                category = Category.School;
+              },
+              child: Row(
+                children: [
+                  Image.asset(
+                    "assets/images/school.png",
+                  ),
+                  const Text("School")
+                ],
+              )),
+          PopupMenuItem(
+              onTap: () async {
+                Task NewTask = Task.create(
+                    category: category,
+                    Name: name,
+                    EndDate: time,
+                    taskContent: value);
+                _AllTasks.insert(0, NewTask);
+
+                await _localStorage.AddTask(Task: NewTask);
+                setState(() {});
+                category = Category.Payments;
+              },
+              child: Row(
+                children: [
+                  Image.asset(
+                    "assets/images/bill.png",
+                    scale: 1.9,
+                  ),
+                  const Text("Payments")
+                ],
+              ))
+        ]);
   }
 }

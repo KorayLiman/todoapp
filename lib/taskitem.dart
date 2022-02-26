@@ -7,7 +7,7 @@ import 'package:todoapp/data/local_storage.dart';
 import 'package:todoapp/main.dart';
 import 'package:todoapp/models/task_model.dart';
 
-enum Category { Business, School, Payments }
+
 
 class TaskItem extends StatefulWidget {
   TaskItem(
@@ -73,7 +73,7 @@ class _TaskItemState extends State<TaskItem> {
             color: Colors.red.shade300,
             context: context,
             position: RelativeRect.fromLTRB(MediaQuery.of(context).size.width,
-                MediaQuery.of(context).size.height, 00, 0),
+                MediaQuery.of(context).size.height, 0, 0),
             items: [
               PopupMenuItem(
                 child: Row(
