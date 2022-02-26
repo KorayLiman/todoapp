@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage>
     // TODO: implement initState
     super.initState();
     tz.initializeTimeZones();
-   
+
     _localStorage = locator<LocalStorage>();
     _AllTasks = <Task>[];
     _SchoolTasks = <Task>[];
@@ -359,11 +359,15 @@ class _HomePageState extends State<HomePage>
 
   void _ShowCategorySelection(String name, DateTime time, String value) {
     showMenu(
+        
         color: Colors.blue.shade500,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         context: context,
-        position: RelativeRect.fromLTRB(MediaQuery.of(context).size.width / 2,
-            MediaQuery.of(context).size.height / 2, 0, 0),
+        position: RelativeRect.fromLTRB(
+            MediaQuery.of(context).size.width / 6,
+            MediaQuery.of(context).size.height / 1.5,
+            MediaQuery.of(context).size.width / 3,
+            0),
         items: [
           PopupMenuItem(
               onTap: () async {
@@ -421,7 +425,6 @@ class _HomePageState extends State<HomePage>
 //     0, 'Title', 'Notification', platformChannelSpecifics,
 //     payload: 'item x');
 
-               
                 category = Category.Payments;
 
                 Task NewTask = Task.create(
@@ -432,11 +435,13 @@ class _HomePageState extends State<HomePage>
                 _PaymentTasks.insert(0, NewTask);
 
                 await _localStorage.AddTask(Task: NewTask);
-                 await flutterLocalNotificationsPlugin.zonedSchedule(
+                await flutterLocalNotificationsPlugin.zonedSchedule(
                     0,
                     'scheduled title',
                     'scheduled body',
-                    tz.TZDateTime.now(tz.local).add(Duration(milliseconds: (NewTask.EndDate.millisecondsSinceEpoch- DateTime.now().millisecondsSinceEpoch))),
+                    tz.TZDateTime.now(tz.local).add(Duration(
+                        milliseconds: (NewTask.EndDate.millisecondsSinceEpoch -
+                            DateTime.now().millisecondsSinceEpoch))),
                     const NotificationDetails(
                         android: AndroidNotificationDetails(
                             'your channel id', 'your channel name',

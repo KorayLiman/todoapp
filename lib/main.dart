@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -41,6 +43,7 @@ String? selectedNotificationPayload;
 Future<void> SetupHive() async {
   await Hive.initFlutter();
   Hive.registerAdapter(TaskAdapter());
+ 
   Hive.registerAdapter(CategoryAdapter());
   var TaskBox = await Hive.openBox<Task>("TaskBox");
 }
@@ -77,7 +80,7 @@ void main() async {
       iOS: initializationSettingsIOS,
       macOS: initializationSettingsMacOS);
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onSelectNotification: (String? test){});
+      onSelectNotification: (String? test) {});
 
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);

@@ -24,7 +24,7 @@ class Task extends HiveObject {
   @HiveField(3)
   final String? TaskContent;
   @HiveField(4)
-  final Category category;
+  final Category? category;
 
   Task(
       {required this.category,
