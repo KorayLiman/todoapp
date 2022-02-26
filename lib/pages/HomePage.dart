@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:analog_clock/analog_clock.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_awesome_alert_box/flutter_awesome_alert_box.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -13,7 +16,6 @@ import 'package:todoapp/helper/translation_helper.dart';
 import 'package:todoapp/main.dart';
 import 'package:todoapp/models/task_model.dart';
 import 'package:todoapp/taskitem.dart';
-
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -27,7 +29,8 @@ class _HomePageState extends State<HomePage>
   late LocalStorage _localStorage;
   late List<Task> _AllTasks;
   late TabController _MyTabController;
-
+  var formKey = GlobalKey<FormState>();
+  late Timer _timer;
   @override
   void initState() {
     // TODO: implement initState
@@ -84,7 +87,7 @@ class _HomePageState extends State<HomePage>
                     child: SizedBox(
                       width: MediaQuery.of(context).size.width - 200,
                       child: const Text(
-                        "Press + button to add and swipe right to remove task",
+                        "Press + button to add and long press to remove task",
                         style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
@@ -137,7 +140,7 @@ class _HomePageState extends State<HomePage>
                       controller: _MyTabController,
                       tabs: [
                         Tab(
-                          child: Text("Business",
+                          child: Text("Work",
                               style: GoogleFonts.lobster(
                                 color: Colors.black,
                               )),
@@ -167,28 +170,44 @@ class _HomePageState extends State<HomePage>
                         ),
                       ]),
                   Expanded(
-                    child: SingleChildScrollView(
-                      physics: ScrollPhysics(),
-                      child: ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemBuilder: (context, index) {
-                          var _CurrentListElement = _AllTasks[index];
-                          return Dismissible(
-                              onDismissed: (direction) {
-                                setState(() {
-                                  _AllTasks.removeAt(index);
-                                  _localStorage.DeleteTask(
-                                      task: _CurrentListElement);
-                                });
-                              },
-                              key: Key(_CurrentListElement.Id),
-                              child: TaskItem(
+                    child: TabBarView(
+                      controller: _MyTabController,
+                      children: [
+                        SingleChildScrollView(
+                          physics: ScrollPhysics(),
+                          child: ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) {
+                              var _CurrentListElement = _AllTasks[index];
+                              return TaskItem(
                                 task: _CurrentListElement,
-                              ));
-                        },
-                        itemCount: _AllTasks.length,
-                      ),
+                                AllTasks: _AllTasks,
+                                localStorage: _localStorage,
+                                index: index,
+                                onDelete: () {
+                                  setState(() {});
+                                },
+                              );
+                              // return Dismissible(
+                              //     onDismissed: (direction) {
+                              //       setState(() {
+                              //         _AllTasks.removeAt(index);
+                              //         _localStorage.DeleteTask(
+                              //             task: _CurrentListElement);
+                              //       });
+                              //     },
+                              //     key: Key(_CurrentListElement.Id),
+                              //     child: TaskItem(
+                              //       task: _CurrentListElement,
+                              //     ));
+                            },
+                            itemCount: _AllTasks.length,
+                          ),
+                        ),
+                        Container(),
+                        Container()
+                      ],
                     ),
                   )
                 ],
@@ -265,18 +284,44 @@ class _HomePageState extends State<HomePage>
                 bottom: MediaQuery.of(context).viewInsets.bottom),
             width: MediaQuery.of(context).size.width,
             child: ListTile(
-                title: TextField(
+                title: TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              validator: (value) {
+                return value!.length < 2
+                    ? "Content must be greater than 2 characters"
+                    : null;
+              },
               decoration: InputDecoration(hintText: "Please write the content"),
               maxLength: 100,
               autofocus: true,
-              onSubmitted: (value) async {
-                Navigator.pop(context);
-                Task NewTask =
-                    Task.create(Name: name, EndDate: time, taskContent: value);
-                _AllTasks.insert(0, NewTask);
+              onFieldSubmitted: (value) async {
+                if (value.length < 2) {
+                  Navigator.pop(context);
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        _timer = Timer(Duration(seconds: 2), () {
+                          Navigator.pop(context);
+                        });
+                        return AlertDialog(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          title: Text(
+                            "Content must be greater than 2 characters",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.red,
+                        );
+                      });
+                } else {
+                  Navigator.pop(context);
+                  Task NewTask = Task.create(
+                      Name: name, EndDate: time, taskContent: value);
+                  _AllTasks.insert(0, NewTask);
 
-                await _localStorage.AddTask(Task: NewTask);
-                setState(() {});
+                  await _localStorage.AddTask(Task: NewTask);
+                  setState(() {});
+                }
               },
             )),
           );

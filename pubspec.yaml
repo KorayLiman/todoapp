@@ -45,6 +45,9 @@ dependencies:
   flutter_datetime_picker: ^1.5.1
   easy_localization: ^3.0.0
   flutter_local_notifications: ^9.3.2
+  flutter_awesome_alert_box: ^2.1.1
+  auto_size_text: ^3.0.0
+  focused_menu: ^1.0.5
   
 
 dev_dependencies:
