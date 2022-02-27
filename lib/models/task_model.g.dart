@@ -68,6 +68,8 @@ class CategoryAdapter extends TypeAdapter<Category> {
         return Category.School;
       case 2:
         return Category.Payments;
+      case 3:
+        return Category.Other;
       default:
         return Category.Business;
     }
@@ -84,6 +86,9 @@ class CategoryAdapter extends TypeAdapter<Category> {
         break;
       case Category.Payments:
         writer.writeByte(2);
+        break;
+      case Category.Other:
+        writer.writeByte(3);
         break;
     }
   }

@@ -10,7 +10,9 @@ enum Category {
   @HiveField(1)
   School,
   @HiveField(2)
-  Payments
+  Payments,
+  @HiveField(3)
+  Other
 }
 
 @HiveType(typeId: 1)

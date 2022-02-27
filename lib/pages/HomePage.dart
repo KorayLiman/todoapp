@@ -34,6 +34,7 @@ class _HomePageState extends State<HomePage>
   late List<Task> _AllTasks;
   late List<Task> _SchoolTasks;
   late List<Task> _PaymentTasks;
+  late List<Task> _OtherTasks;
   late TabController _MyTabController;
   late Category category;
   var formKey = GlobalKey<FormState>();
@@ -49,8 +50,9 @@ class _HomePageState extends State<HomePage>
     _AllTasks = <Task>[];
     _SchoolTasks = <Task>[];
     _PaymentTasks = <Task>[];
+    _OtherTasks = <Task>[];
     _GetAllTasksFromDB();
-    _MyTabController = TabController(length: 3, vsync: this);
+    _MyTabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -93,6 +95,13 @@ class _HomePageState extends State<HomePage>
                                   ),
                                   const Text(
                                     "Enjoy :)",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  SizedBox(
+                                    height: 4,
+                                  ),
+                                  const Text(
+                                    "Sivas Cumhuriyet University",
                                     textAlign: TextAlign.center,
                                   )
                                 ]);
@@ -200,6 +209,17 @@ class _HomePageState extends State<HomePage>
                             scale: 1.9,
                           ),
                         ),
+                        Tab(
+                          child: Text("Other",
+                              style: GoogleFonts.lobster(
+                                color: Colors.black,
+                              )),
+                          height: 105,
+                          icon: Image.asset(
+                            "assets/images/other.png",
+                            scale: 1.9,
+                          ),
+                        ),
                       ]),
                   Expanded(
                     child: TabBarView(
@@ -258,6 +278,22 @@ class _HomePageState extends State<HomePage>
                                       localStorage: _localStorage,
                                       index: index);
                                 })),
+                        SingleChildScrollView(
+                            child: ListView.builder(
+                                itemCount: _OtherTasks.length,
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  var _CurrentListElement = _OtherTasks[index];
+                                  return TaskItem(
+                                      onDelete: () {
+                                        setState(() {});
+                                      },
+                                      task: _CurrentListElement,
+                                      AllTasks: _OtherTasks,
+                                      localStorage: _localStorage,
+                                      index: index);
+                                }))
                       ],
                     ),
                   )
@@ -348,6 +384,7 @@ class _HomePageState extends State<HomePage>
     _AllTasks = await _localStorage.GetAllTasks(Category.Business);
     _SchoolTasks = await _localStorage.GetAllTasks(Category.School);
     _PaymentTasks = await _localStorage.GetAllTasks(Category.Payments);
+    _OtherTasks = await _localStorage.GetAllTasks(Category.Other);
 
     setState(() {});
   }
@@ -376,9 +413,10 @@ class _HomePageState extends State<HomePage>
                   Navigator.pop(context);
                   showDialog(
                       context: context,
-                      builder: (context) {_timer = Timer(Duration(seconds: 2), () {
-                                Navigator.pop(context);
-                              });
+                      builder: (context) {
+                        _timer = Timer(Duration(seconds: 2), () {
+                          Navigator.pop(context);
+                        });
                         return AlertDialog(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
@@ -556,7 +594,53 @@ class _HomePageState extends State<HomePage>
                   ),
                   const Text("Payments")
                 ],
-              ))
+              )),
+          PopupMenuItem(
+              onTap: () async {
+                category = Category.Other;
+                int id;
+                if (HiveLocalStorage.IntBox.isEmpty) {
+                  id = 0;
+                  HiveLocalStorage.IntBox.add(id);
+                } else {
+                  id = HiveLocalStorage.IntBox.getAt(
+                      HiveLocalStorage.IntBox.length - 1)!;
+                  HiveLocalStorage.IntBox.add(id + 1);
+                }
+                Task NewTask = Task.create(
+                    NotificationId: id,
+                    category: category,
+                    Name: name,
+                    EndDate: time,
+                    taskContent: value);
+                _OtherTasks.insert(0, NewTask);
+
+                await _localStorage.AddTask(Task: NewTask);
+                await flutterLocalNotificationsPlugin.zonedSchedule(
+                    id,
+                    'Hello, you have a scheduled task now',
+                    '${NewTask.Name}',
+                    tz.TZDateTime.now(tz.local).add(Duration(
+                        milliseconds: (NewTask.EndDate.millisecondsSinceEpoch -
+                            DateTime.now().millisecondsSinceEpoch))),
+                    const NotificationDetails(
+                        android: AndroidNotificationDetails(
+                            'your channel id', 'your channel name',
+                            channelDescription: 'your channel description')),
+                    androidAllowWhileIdle: true,
+                    uiLocalNotificationDateInterpretation:
+                        UILocalNotificationDateInterpretation.absoluteTime);
+                setState(() {});
+              },
+              child: Row(
+                children: [
+                  Image.asset(
+                    "assets/images/other.png",
+                    scale: 1.9,
+                  ),
+                  const Text("Other")
+                ],
+              )),
         ]);
   }
 }
