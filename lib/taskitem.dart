@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -38,7 +39,10 @@ class _TaskItemState extends State<TaskItem> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      textColor: widget.task.EndDate.microsecondsSinceEpoch <= DateTime.now().microsecondsSinceEpoch ? Colors.red:Colors.black,
+      textColor: widget.task.EndDate.microsecondsSinceEpoch <=
+              DateTime.now().microsecondsSinceEpoch
+          ? Colors.red
+          : Colors.black,
       trailing: Text(widget.task.EndDate.toString().substring(0, 16)),
       title: Text(widget.task.Name),
       onTap: () {
@@ -78,7 +82,17 @@ class _TaskItemState extends State<TaskItem> {
                 child: Row(
                   children: [Icon(Icons.delete), const Text("Delete")],
                 ),
-                onTap: () {
+                onTap: () async {
+                  List<PendingNotificationRequest> pendingNotificationRequests =
+                      await flutterLocalNotificationsPlugin
+                          .pendingNotificationRequests();
+                 
+                  if (pendingNotificationRequests.isNotEmpty) {
+                    await flutterLocalNotificationsPlugin
+                        .cancel(widget.task.NotificationId!);
+                    HiveLocalStorage.IntBox.deleteAt(0);
+                  }
+
                   widget.AllTasks.removeAt(widget.index);
                   widget.localStorage.DeleteTask(task: widget.task);
                   widget.onDelete();

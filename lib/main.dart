@@ -43,9 +43,10 @@ String? selectedNotificationPayload;
 Future<void> SetupHive() async {
   await Hive.initFlutter();
   Hive.registerAdapter(TaskAdapter());
- 
+
   Hive.registerAdapter(CategoryAdapter());
   var TaskBox = await Hive.openBox<Task>("TaskBox");
+  var ListBox = await Hive.openBox<int>("IntBox");
 }
 
 final locator = GetIt.instance;

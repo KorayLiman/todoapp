@@ -77,9 +77,29 @@ class _HomePageState extends State<HomePage>
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 100.0, right: 30),
-                        child: Image.asset(
-                          "assets/images/tasklist.png",
-                          scale: 1.2,
+                        child: IconButton(
+                          iconSize: 46,
+                          onPressed: () {
+                            showAboutDialog(
+                                context: context,
+                                applicationIcon:
+                                    Image.asset("assets/images/tasklist.png"),
+                                applicationVersion: "v1.0",
+                                children: [
+                                  const Text(
+                                    "This app made by Koray Liman",
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const Text(
+                                    "Enjoy :)",
+                                    textAlign: TextAlign.center,
+                                  )
+                                ]);
+                          },
+                          icon: Image.asset(
+                            "assets/images/tasklist.png",
+                            scale: 1.2,
+                          ),
                         ),
                       )
                     ],
@@ -359,7 +379,6 @@ class _HomePageState extends State<HomePage>
 
   void _ShowCategorySelection(String name, DateTime time, String value) {
     showMenu(
-        
         color: Colors.blue.shade500,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         context: context,
@@ -372,8 +391,17 @@ class _HomePageState extends State<HomePage>
           PopupMenuItem(
               onTap: () async {
                 category = Category.Business;
-
+                int id;
+                if (HiveLocalStorage.IntBox.isEmpty) {
+                  id = 0;
+                  HiveLocalStorage.IntBox.add(id);
+                } else {
+                  id = HiveLocalStorage.IntBox.getAt(
+                      HiveLocalStorage.IntBox.length - 1)!;
+                  HiveLocalStorage.IntBox.add(id + 1);
+                }
                 Task NewTask = Task.create(
+                    NotificationId: id,
                     category: category,
                     Name: name,
                     EndDate: time,
@@ -392,8 +420,17 @@ class _HomePageState extends State<HomePage>
           PopupMenuItem(
               onTap: () async {
                 category = Category.School;
-
+                int id;
+                if (HiveLocalStorage.IntBox.isEmpty) {
+                  id = 0;
+                  HiveLocalStorage.IntBox.add(id);
+                } else {
+                  id = HiveLocalStorage.IntBox.getAt(
+                      HiveLocalStorage.IntBox.length - 1)!;
+                  HiveLocalStorage.IntBox.add(id + 1);
+                }
                 Task NewTask = Task.create(
+                    NotificationId: id,
                     category: category,
                     Name: name,
                     EndDate: time,
@@ -426,8 +463,17 @@ class _HomePageState extends State<HomePage>
 //     payload: 'item x');
 
                 category = Category.Payments;
-
+                int id;
+                if (HiveLocalStorage.IntBox.isEmpty) {
+                  id = 0;
+                  HiveLocalStorage.IntBox.add(id);
+                } else {
+                  id = HiveLocalStorage.IntBox.getAt(
+                      HiveLocalStorage.IntBox.length - 1)!;
+                  HiveLocalStorage.IntBox.add(id + 1);
+                }
                 Task NewTask = Task.create(
+                    NotificationId: id,
                     category: category,
                     Name: name,
                     EndDate: time,
@@ -436,9 +482,9 @@ class _HomePageState extends State<HomePage>
 
                 await _localStorage.AddTask(Task: NewTask);
                 await flutterLocalNotificationsPlugin.zonedSchedule(
-                    0,
-                    'scheduled title',
-                    'scheduled body',
+                    id,
+                    'Hello,',
+                    'You have a TASK scheduled now',
                     tz.TZDateTime.now(tz.local).add(Duration(
                         milliseconds: (NewTask.EndDate.millisecondsSinceEpoch -
                             DateTime.now().millisecondsSinceEpoch))),
