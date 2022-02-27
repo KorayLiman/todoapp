@@ -66,74 +66,94 @@ class _HomePageState extends State<HomePage>
             flex: 6,
             child: Container(
               color: Color.fromRGBO(4, 12, 58, 1),
-              child: Stack(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 100.0, left: 40),
-                        child: Text(
-                          "Hello...",
-                          style: TextStyle(color: Colors.white, fontSize: 24),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 100.0, right: 30),
-                        child: IconButton(
-                          iconSize: 46,
-                          onPressed: () {
-                            showAboutDialog(
-                                context: context,
-                                applicationIcon:
-                                    Image.asset("assets/images/tasklist.png"),
-                                applicationVersion: "v1.0",
-                                children: [
-                                  const Text(
-                                    "This app made by Koray Liman",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const Text(
-                                    "Enjoy :)",
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  SizedBox(
-                                    height: 4,
-                                  ),
-                                  const Text(
-                                    "Sivas Cumhuriyet University",
-                                    textAlign: TextAlign.center,
-                                  )
-                                ]);
-                          },
-                          icon: Image.asset(
-                            "assets/images/tasklist.png",
-                            scale: 1.2,
+              child: Padding(
+                padding: const EdgeInsets.only(top:58.0,left: 20),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Row(
+
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+
+                            child: Text(
+                              "Hello...",
+                              style: TextStyle(color: Colors.white, fontSize: 24),
+                            ),
                           ),
-                        ),
-                      )
-                    ],
-                  ),
-                  Positioned(
-                    top: MediaQuery.of(context).size.height / 5,
-                    left: 40,
-                    child: Text(
-                      "Manage your tasks easily",
-                      style: Constants.MyStyle,
-                    ),
-                  ),
-                  Positioned(
-                    bottom: -2,
-                    left: 40,
-                    child: SizedBox(
-                      width: MediaQuery.of(context).size.width - 200,
-                      child: const Text(
-                        "Press + button to add and long press to remove task",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
+
+
+
+
+                        ],
                       ),
                     ),
-                  )
-                ],
+                    Expanded(flex: 2,
+                      child: Row(mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+  width: 200,
+                            child: AutoSizeText(
+                              "Manage your tasks easily",
+                              style: Constants.MyStyle,minFontSize: 14,
+                            ),
+                          ),
+
+
+                          Padding(
+                            padding: const EdgeInsets.only(right:28.0,top: 0),
+                            child: IconButton(
+                              iconSize:60,
+                              onPressed: () {
+                                showAboutDialog(
+                                    context: context,
+                                    applicationIcon:
+                                    Image.asset("assets/images/tasklist.png"),
+                                    applicationVersion: "v1.0",
+                                    children: [
+                                      const Text(
+                                        "This app made by Koray Liman",
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      const Text(
+                                        "Enjoy :)",
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      SizedBox(
+                                        height: 4,
+                                      ),
+                                      const Text(
+                                        "Sivas Cumhuriyet University",
+                                        textAlign: TextAlign.center,
+                                      )
+                                    ]);
+                              },
+                              icon: Image.asset(
+                                "assets/images/tasklist.png",
+                                scale: 1.2,
+                              ),
+                            ),
+                          ),
+
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: 230,
+
+                          child:  AutoSizeText(
+                            "Press + button to add and long press to remove task",
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                            minFontSize: 12,
+                          ),
+
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
