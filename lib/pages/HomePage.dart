@@ -38,6 +38,7 @@ class _HomePageState extends State<HomePage>
   late Category category;
   var formKey = GlobalKey<FormState>();
   late Timer _timer;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -285,8 +286,31 @@ class _HomePageState extends State<HomePage>
                   if (value.length > 1) {
                     DatePicker.showDateTimePicker(context,
                         //locale: TranslationHelper.getDeviceLanguage(context),
-                        onConfirm: (time) async {
-                      ShowContentTextField(value, time);
+                        onConfirm: (time) {
+                      if (time.millisecondsSinceEpoch >
+                          DateTime.now().millisecondsSinceEpoch) {
+                        ShowContentTextField(value, time);
+                      } else {
+                        showDialog(
+                            context: super.context,
+                            builder: (context) {
+                              _timer = Timer(Duration(seconds: 2), () {
+                                Navigator.pop(context);
+                              });
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                title: const Text(
+                                  "Oooops!!!",
+                                  textAlign: TextAlign.center,
+                                ),
+                                content: const Text(
+                                  "Selected time must be in the future",
+                                  textAlign: TextAlign.center,
+                                ),
+                              );
+                            });
+                      }
 
                       // Task NewTask = Task.create(
                       //     Name: value,
@@ -353,9 +377,6 @@ class _HomePageState extends State<HomePage>
                   showDialog(
                       context: context,
                       builder: (context) {
-                        _timer = Timer(Duration(seconds: 2), () {
-                          Navigator.pop(context);
-                        });
                         return AlertDialog(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
@@ -409,6 +430,20 @@ class _HomePageState extends State<HomePage>
                 _AllTasks.insert(0, NewTask);
 
                 await _localStorage.AddTask(Task: NewTask);
+                await flutterLocalNotificationsPlugin.zonedSchedule(
+                    id,
+                    'Hello, you have a scheduled task now',
+                    '${NewTask.Name}',
+                    tz.TZDateTime.now(tz.local).add(Duration(
+                        milliseconds: (NewTask.EndDate.millisecondsSinceEpoch -
+                            DateTime.now().millisecondsSinceEpoch))),
+                    const NotificationDetails(
+                        android: AndroidNotificationDetails(
+                            'your channel id', 'your channel name',
+                            channelDescription: 'your channel description')),
+                    androidAllowWhileIdle: true,
+                    uiLocalNotificationDateInterpretation:
+                        UILocalNotificationDateInterpretation.absoluteTime);
                 setState(() {});
               },
               child: Row(
@@ -438,6 +473,20 @@ class _HomePageState extends State<HomePage>
                 _SchoolTasks.insert(0, NewTask);
 
                 await _localStorage.AddTask(Task: NewTask);
+                await flutterLocalNotificationsPlugin.zonedSchedule(
+                    id,
+                    'Hello, you have a scheduled task now',
+                    '${NewTask.Name}',
+                    tz.TZDateTime.now(tz.local).add(Duration(
+                        milliseconds: (NewTask.EndDate.millisecondsSinceEpoch -
+                            DateTime.now().millisecondsSinceEpoch))),
+                    const NotificationDetails(
+                        android: AndroidNotificationDetails(
+                            'your channel id', 'your channel name',
+                            channelDescription: 'your channel description')),
+                    androidAllowWhileIdle: true,
+                    uiLocalNotificationDateInterpretation:
+                        UILocalNotificationDateInterpretation.absoluteTime);
                 setState(() {});
               },
               child: Row(
@@ -483,8 +532,8 @@ class _HomePageState extends State<HomePage>
                 await _localStorage.AddTask(Task: NewTask);
                 await flutterLocalNotificationsPlugin.zonedSchedule(
                     id,
-                    'Hello,',
-                    'You have a TASK scheduled now',
+                    'Hello, you have a scheduled task now',
+                    '${NewTask.Name}',
                     tz.TZDateTime.now(tz.local).add(Duration(
                         milliseconds: (NewTask.EndDate.millisecondsSinceEpoch -
                             DateTime.now().millisecondsSinceEpoch))),
