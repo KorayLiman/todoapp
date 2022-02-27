@@ -376,15 +376,17 @@ class _HomePageState extends State<HomePage>
                   Navigator.pop(context);
                   showDialog(
                       context: context,
-                      builder: (context) {
+                      builder: (context) {_timer = Timer(Duration(seconds: 2), () {
+                                Navigator.pop(context);
+                              });
                         return AlertDialog(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(20)),
                           title: Text(
                             "Content must be greater than 2 characters",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(color: Colors.black),
                           ),
-                          backgroundColor: Colors.red,
+                          backgroundColor: Colors.white,
                         );
                       });
                 } else {

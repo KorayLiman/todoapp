@@ -49,8 +49,13 @@ dependencies:
   auto_size_text: ^3.0.0
   focused_menu: ^1.0.5
   rxdart: ^0.27.3
+  flutter_launcher_icons: ^0.9.2
   
-  
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/tasklist.png"  
+  remove_alpha_ios: true
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +64,8 @@ dev_dependencies:
 flutter_native_splash:
   
   color: "#2990ff"
+
+  
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
