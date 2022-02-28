@@ -67,50 +67,47 @@ class _HomePageState extends State<HomePage>
             child: Container(
               color: Color.fromRGBO(4, 12, 58, 1),
               child: Padding(
-                padding: const EdgeInsets.only(top:58.0,left: 20),
-                child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.only(top: 58.0, left: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: Row(
-
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-
                             child: Text(
                               "Hello...",
-                              style: TextStyle(color: Colors.white, fontSize: 24),
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 24),
                             ),
                           ),
-
-
-
-
                         ],
                       ),
                     ),
-                    Expanded(flex: 2,
-                      child: Row(mainAxisSize: MainAxisSize.max,
+                    Expanded(
+                      flex: 2,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.max,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-  width: 200,
+                            width: 230,
                             child: AutoSizeText(
                               "Manage your tasks easily",
-                              style: Constants.MyStyle,minFontSize: 14,
+                              style: Constants.MyStyle,
+                              minFontSize: 14,
                             ),
                           ),
-
-
                           Padding(
-                            padding: const EdgeInsets.only(right:28.0,top: 0),
+                            padding: const EdgeInsets.only(right: 28.0, top: 0),
                             child: IconButton(
-                              iconSize:60,
+                              iconSize: 60,
                               onPressed: () {
                                 showAboutDialog(
                                     context: context,
-                                    applicationIcon:
-                                    Image.asset("assets/images/tasklist.png"),
+                                    applicationIcon: Image.asset(
+                                        "assets/images/tasklist.png"),
                                     applicationVersion: "v1.0",
                                     children: [
                                       const Text(
@@ -136,20 +133,17 @@ class _HomePageState extends State<HomePage>
                               ),
                             ),
                           ),
-
                         ],
                       ),
                     ),
                     Expanded(
                       child: Container(
                         width: 230,
-
-                          child:  AutoSizeText(
-                            "Press + button to add and long press to remove task",
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                            minFontSize: 12,
-                          ),
-
+                        child: AutoSizeText(
+                          "Press + button to add and long press to remove task",
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                          minFontSize: 12,
+                        ),
                       ),
                     )
                   ],
@@ -336,7 +330,7 @@ class _HomePageState extends State<HomePage>
             width: MediaQuery.of(context).size.width,
             child: ListTile(
               title: TextField(
-                maxLength: 30,
+                maxLength: 40,
                 onSubmitted: (value) {
                   Navigator.pop(context);
                   if (value.length > 1) {
@@ -345,7 +339,7 @@ class _HomePageState extends State<HomePage>
                         onConfirm: (time) {
                       if (time.millisecondsSinceEpoch >
                           DateTime.now().millisecondsSinceEpoch) {
-                        ShowContentTextField(value, time);
+                        _ShowCategorySelection(value, time);
                       } else {
                         showDialog(
                             context: super.context,
@@ -409,56 +403,56 @@ class _HomePageState extends State<HomePage>
     setState(() {});
   }
 
-  void ShowContentTextField(String name, DateTime time) {
-    showBarModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return Container(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            width: MediaQuery.of(context).size.width,
-            child: ListTile(
-                title: TextFormField(
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (value) {
-                return value!.length < 2
-                    ? "Content must be greater than 2 characters"
-                    : null;
-              },
-              decoration: InputDecoration(hintText: "Please write the content"),
-              maxLength: 100,
-              autofocus: true,
-              onFieldSubmitted: (value) async {
-                if (value.length < 2) {
-                  Navigator.pop(context);
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        _timer = Timer(Duration(seconds: 2), () {
-                          Navigator.pop(context);
-                        });
-                        return AlertDialog(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          title: Text(
-                            "Content must be greater than 2 characters",
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          backgroundColor: Colors.white,
-                        );
-                      });
-                } else {
-                  Navigator.pop(context);
+  // void ShowContentTextField(String name, DateTime time) {
+  //   showBarModalBottomSheet(
+  //       context: context,
+  //       builder: (context) {
+  //         return Container(
+  //           padding: EdgeInsets.only(
+  //               bottom: MediaQuery.of(context).viewInsets.bottom),
+  //           width: MediaQuery.of(context).size.width,
+  //           child: ListTile(
+  //               title: TextFormField(
+  //             autovalidateMode: AutovalidateMode.onUserInteraction,
+  //             validator: (value) {
+  //               return value!.length < 2
+  //                   ? "Content must be greater than 2 characters"
+  //                   : null;
+  //             },
+  //             decoration: InputDecoration(hintText: "Please write the content"),
+  //             maxLength: 100,
+  //             autofocus: true,
+  //             onFieldSubmitted: (value) async {
+  //               if (value.length < 2) {
+  //                 Navigator.pop(context);
+  //                 showDialog(
+  //                     context: context,
+  //                     builder: (context) {
+  //                       _timer = Timer(Duration(seconds: 2), () {
+  //                         Navigator.pop(context);
+  //                       });
+  //                       return AlertDialog(
+  //                         shape: RoundedRectangleBorder(
+  //                             borderRadius: BorderRadius.circular(20)),
+  //                         title: Text(
+  //                           "Content must be greater than 2 characters",
+  //                           style: TextStyle(color: Colors.black),
+  //                         ),
+  //                         backgroundColor: Colors.white,
+  //                       );
+  //                     });
+  //               } else {
+  //                 Navigator.pop(context);
 
-                  _ShowCategorySelection(name, time, value);
-                }
-              },
-            )),
-          );
-        });
-  }
+  //                 _ShowCategorySelection(name, time);
+  //               }
+  //             },
+  //           )),
+  //         );
+  //       });
+  // }
 
-  void _ShowCategorySelection(String name, DateTime time, String value) {
+  void _ShowCategorySelection(String name, DateTime time) {
     showMenu(
         color: Colors.blue.shade500,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -482,11 +476,11 @@ class _HomePageState extends State<HomePage>
                   HiveLocalStorage.IntBox.add(id + 1);
                 }
                 Task NewTask = Task.create(
-                    NotificationId: id,
-                    category: category,
-                    Name: name,
-                    EndDate: time,
-                    taskContent: value);
+                  NotificationId: id,
+                  category: category,
+                  Name: name,
+                  EndDate: time,
+                );
                 _AllTasks.insert(0, NewTask);
 
                 await _localStorage.AddTask(Task: NewTask);
@@ -525,11 +519,11 @@ class _HomePageState extends State<HomePage>
                   HiveLocalStorage.IntBox.add(id + 1);
                 }
                 Task NewTask = Task.create(
-                    NotificationId: id,
-                    category: category,
-                    Name: name,
-                    EndDate: time,
-                    taskContent: value);
+                  NotificationId: id,
+                  category: category,
+                  Name: name,
+                  EndDate: time,
+                );
                 _SchoolTasks.insert(0, NewTask);
 
                 await _localStorage.AddTask(Task: NewTask);
@@ -582,11 +576,11 @@ class _HomePageState extends State<HomePage>
                   HiveLocalStorage.IntBox.add(id + 1);
                 }
                 Task NewTask = Task.create(
-                    NotificationId: id,
-                    category: category,
-                    Name: name,
-                    EndDate: time,
-                    taskContent: value);
+                  NotificationId: id,
+                  category: category,
+                  Name: name,
+                  EndDate: time,
+                );
                 _PaymentTasks.insert(0, NewTask);
 
                 await _localStorage.AddTask(Task: NewTask);
@@ -628,11 +622,11 @@ class _HomePageState extends State<HomePage>
                   HiveLocalStorage.IntBox.add(id + 1);
                 }
                 Task NewTask = Task.create(
-                    NotificationId: id,
-                    category: category,
-                    Name: name,
-                    EndDate: time,
-                    taskContent: value);
+                  NotificationId: id,
+                  category: category,
+                  Name: name,
+                  EndDate: time,
+                );
                 _OtherTasks.insert(0, NewTask);
 
                 await _localStorage.AddTask(Task: NewTask);

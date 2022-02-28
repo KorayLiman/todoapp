@@ -38,69 +38,48 @@ class _TaskItemState extends State<TaskItem> {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      textColor: widget.task.EndDate.microsecondsSinceEpoch <=
-              DateTime.now().microsecondsSinceEpoch
-          ? Colors.red
-          : Colors.black,
-      trailing: Text(widget.task.EndDate.toString().substring(0, 16)),
-      title: Text(widget.task.Name),
-      onTap: () {
-        showDialog(
-            context: context,
-            builder: (context) {
-              return Center(
-                  child: Container(
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12)),
-                child: Column(
-                  children: [
-                    Image.asset("assets/images/todo_list_64px.png"),
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: AutoSizeText(
-                        widget.task.TaskContent ?? "No Content",
-                        minFontSize: 18,
-                      ),
-                    ),
-                  ],
-                ),
-                height: 250,
-                width: MediaQuery.of(context).size.width / 1.3,
-              ));
-            });
-      },
-      onLongPress: () {
-        showMenu(
-            color: Colors.red.shade300,
-            context: context,
-            position: RelativeRect.fromLTRB(MediaQuery.of(context).size.width,
-                MediaQuery.of(context).size.height, 0, 0),
-            items: [
-              PopupMenuItem(
-                child: Row(
-                  children: [Icon(Icons.delete), const Text("Delete")],
-                ),
-                onTap: () async {
-                  List<PendingNotificationRequest> pendingNotificationRequests =
+    return InkWell(
+      child: ListTile(
+        textColor: widget.task.EndDate.microsecondsSinceEpoch <=
+                DateTime.now().microsecondsSinceEpoch
+            ? Colors.red
+            : Colors.black,
+        trailing: Text(widget.task.EndDate.toString().substring(0, 16)),
+        title: Text(widget.task.Name),
+        onTap: () {
+         
+        },
+        onLongPress: () {
+          showMenu(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              color: Colors.red.shade300,
+              context: context,
+              position: RelativeRect.fromLTRB(MediaQuery.of(context).size.width,
+                  MediaQuery.of(context).size.height, 0, 0),
+              items: [
+                PopupMenuItem(
+                  child: Row(
+                    children: [Icon(Icons.delete), const Text("Delete")],
+                  ),
+                  onTap: () async {
+                    List<PendingNotificationRequest> pendingNotificationRequests =
+                        await flutterLocalNotificationsPlugin
+                            .pendingNotificationRequests();
+                   
+                    if (pendingNotificationRequests.isNotEmpty) {
                       await flutterLocalNotificationsPlugin
-                          .pendingNotificationRequests();
-                 
-                  if (pendingNotificationRequests.isNotEmpty) {
-                    await flutterLocalNotificationsPlugin
-                        .cancel(widget.task.NotificationId!);
-                    HiveLocalStorage.IntBox.deleteAt(0);
-                  }
-
-                  widget.AllTasks.removeAt(widget.index);
-                  widget.localStorage.DeleteTask(task: widget.task);
-                  widget.onDelete();
-                },
-              )
-            ]);
-      },
-      leading: Image.asset("assets/images/todo_list_64px.png"),
+                          .cancel(widget.task.NotificationId!);
+                      HiveLocalStorage.IntBox.deleteAt(0);
+                    }
+    
+                    widget.AllTasks.removeAt(widget.index);
+                    widget.localStorage.DeleteTask(task: widget.task);
+                    widget.onDelete();
+                  },
+                )
+              ]);
+        },
+        leading: Image.asset("assets/images/todo_list_64px.png"),
+      ),
     );
 
     // return ExpansionTile(
