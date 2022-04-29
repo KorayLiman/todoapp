@@ -56,6 +56,13 @@ class _HomePageState extends State<HomePage>
   }
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _MyTabController;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -115,6 +122,8 @@ class _HomePageState extends State<HomePage>
                                         textAlign: TextAlign.center,
                                       ),
                                       const Text(
+                                          "Icons from https://icons8.com"),
+                                      const Text(
                                         "Enjoy :)",
                                         textAlign: TextAlign.center,
                                       ),
@@ -122,7 +131,7 @@ class _HomePageState extends State<HomePage>
                                         height: 4,
                                       ),
                                       const Text(
-                                        "Sivas Cumhuriyet University",
+                                        "",
                                         textAlign: TextAlign.center,
                                       )
                                     ]);
@@ -463,6 +472,17 @@ class _HomePageState extends State<HomePage>
             MediaQuery.of(context).size.width / 3,
             0),
         items: [
+          PopupMenuItem(
+              enabled: false,
+              textStyle: TextStyle(color: Colors.black),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text("Please select a task caterogory",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.black)),
+                ],
+              )),
           PopupMenuItem(
               onTap: () async {
                 category = Category.Business;
